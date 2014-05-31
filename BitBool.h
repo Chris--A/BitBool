@@ -1,6 +1,8 @@
 #ifndef HEADER_BITBOOL
   #define HEADER_BITBOOL
-  #include "Arduino.h"
+  
+  #include <stdint.h>
+  #include <stddef.h>
 
   template< size_t _Count, bool _Reverse = false >
     class BitBool{
