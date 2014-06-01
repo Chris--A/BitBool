@@ -29,12 +29,12 @@
   #include <stdint.h>
   #include <stddef.h>
 
-  template< size_t _Count, bool _Reverse = false >
+  template< size_t _Count, bool _MSBLeft = false >
     class BitBool{
       protected:
         struct BitRef{
         
-          BitRef( uint8_t &u_DataRef, const uint8_t u_Idx ) : u_Data( u_DataRef ), u_Index( _Reverse ? ( 0x80 >> u_Idx ) : ( 0x1 << u_Idx ) ) { return; }
+          BitRef( uint8_t &u_DataRef, const uint8_t u_Idx ) : u_Data( u_DataRef ), u_Index( _MSBLeft ? ( 0x80 >> u_Idx ) : ( 0x1 << u_Idx ) ) { return; }
 
           operator const bool() const { return this->u_Data & this->u_Index; }
           
