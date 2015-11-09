@@ -39,15 +39,17 @@ template< size_t _Count, bool _Reverse = false >
                 index( _Reverse ? ( 0x80 >> idx ) : ( 0x1 << idx ) ) 
                 { return; }
 
-            operator const bool() const { return data & index; }
+            operator bool() const { return data & index; }
 
-            const bool operator =( const BitRef &copy ) const { return *this = ( const bool ) copy; }
+            bool operator =( const BitRef &copy ) const { return *this = ( const bool ) copy; }
 
-            const bool operator =( const bool &copy ) const {
+            bool operator =( const bool &copy ) const {
                 if( copy ) data |= index;
                 else       data &= ~index;
                 return copy;
             }
+
+           void invert() const{ data ^= index; }
 
             uint8_t &data;
             uint8_t const index;
