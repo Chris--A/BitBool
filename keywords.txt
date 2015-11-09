@@ -7,4 +7,10 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-BitBool	KEYWORD1	
+BitBool	KEYWORD1
+
+#######################################
+# Members (KEYWORD2)
+#######################################
+
+invert	KEYWORD2
