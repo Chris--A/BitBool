@@ -1,9 +1,9 @@
-/* 
+/*
     The MIT License (MIT)
 
-    Copyright (c) 2012 Christopher Andrews
+    Copyright (c) 2012-2015 Christopher Andrews
     http://arduino.land/Code/BitBool/
-    
+
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -20,44 +20,57 @@
     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE. 
+    THE SOFTWARE.
 */
 
 #ifndef HEADER_BITBOOL
   #define HEADER_BITBOOL
-  
+
   #include <stdint.h>
   #include <stddef.h>
 
-template< size_t _Count, bool _Reverse = false >
-    class BitBool{
-    protected:
-        struct BitRef{
+    template< bool _Reverse = false >
+    struct BitRef{
 
-            BitRef( uint8_t &dataRef, const uint8_t idx ) : 
-                data( dataRef ), 
-                index( _Reverse ? ( 0x80 >> idx ) : ( 0x1 << idx ) ) 
-                { return; }
+        // Construct a BitRef using dynamically calculated offsets (original)
+        BitRef( uint8_t &dataRef, const uint8_t idx ) :
+            data( dataRef ),
+            index( _Reverse ? ( 0x80 >> idx ) : ( 0x1 << idx ) )
+            { return; }
 
-            operator bool() const { return data & index; }
+        // Construct a BitRef using a lookup table.
+        BitRef( uint8_t &dataRef, const uint8_t idx, bool lookupTable ) :
+            data( dataRef ),
+            index( shift[idx] )
+            { return; }
 
-            bool operator =( const BitRef &copy ) const { return *this = ( const bool ) copy; }
+        //Implicit conversion to bit value.
+        operator bool() const { return data & index; }
 
-            bool operator =( const bool &copy ) const {
-                if( copy ) data |= index;
-                else       data &= ~index;
-                return copy;
-            }
+        bool operator =( const BitRef &copy ) const { return *this = ( const bool ) copy; }
 
-           void invert() const{ data ^= index; }
+        bool operator =( const bool &copy ) const {
+            if( copy ) data |= index;
+            else       data &= ~index;
+            return copy;
+        }
 
-            uint8_t &data;
-            uint8_t const index;
-        };  
-    public:
+       void invert() const{ data ^= index; }
+
+        uint8_t &data;
+        uint8_t const index;
+        static const uint8_t shift[8];
+    };
+
+
+template< size_t _Count, bool _Reverse = false, bool LUT = false >
+    struct BitBool{
         enum{ bitCount = _Count, byteCount = ( bitCount / 0x8 ) + ( ( bitCount % 0x8 ) ? 0x1 : 0x0 ) };
 
-        BitRef operator []( const uint16_t index ) { return BitRef( data[ index >> 0x3 ], index & 0x7 ); }  
+        BitRef<_Reverse> operator []( const uint16_t index ) {
+            if(LUT) return BitRef<_Reverse>( data[ index >> 0x3 ], index & 0x7, true );
+            else    return BitRef<_Reverse>( data[ index >> 0x3 ], index & 0x7 );
+        }
         uint8_t data[ byteCount ];
 };
 #endif
