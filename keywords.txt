@@ -14,3 +14,9 @@ BitBool	KEYWORD1
 #######################################
 
 invert	KEYWORD2
+get	KEYWORD2
+set	KEYWORD2
+begin	KEYWORD2
+end	KEYWORD2
+toBitBool	KEYWORD2
+toBitRef	KEYWORD2
