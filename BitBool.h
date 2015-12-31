@@ -24,18 +24,29 @@
 */
 
 #ifndef HEADER_BITBOOL
-  #define HEADER_BITBOOL
+    #define HEADER_BITBOOL
 
-  #include <stdint.h>
-  #include <stddef.h>
+    #include <stdint.h> //uintX_t types
+    #include <stddef.h> //size_t
 
-    template< bool _Reverse = false >
+    enum REVERSE_OPTIONS{
+        REVERSE_NONE,    //This will read data as big endian.
+        REVERSE_BITS,    //Bit index zero references MSB, instead of LSB.
+        REVERSE_BYTES,    //Byte index zero references sizeof(T) - 1.
+        REVERSE_BOTH,    //This will read data as little endian.
+        REVERSE_DEFAULT = REVERSE_NONE
+    };
+
+    #define REVERSE_BITS_MASK 0x01
+    #define REVERSE_BYTES_MASK 0x02
+
+    template< uint8_t reverse = REVERSE_DEFAULT >
     struct BitRef{
 
         // Construct a BitRef using dynamically calculated offsets (original)
         BitRef( uint8_t &dataRef, const uint8_t idx ) :
             data( dataRef ),
-            index( _Reverse ? ( 0x80 >> idx ) : ( 0x1 << idx ) )
+            index( (reverse & REVERSE_BITS_MASK) ? ( 0x80 >> idx ) : ( 0x1 << idx ) )
             { return; }
 
         // Construct a BitRef using a lookup table.
@@ -55,22 +66,116 @@
             return copy;
         }
 
-       void invert() const{ data ^= index; }
+        //Unconditionally invert the bit.
+        void invert() const{ data ^= index; }
 
-        uint8_t &data;
-        uint8_t const index;
-        static const uint8_t shift[8];
+        uint8_t &data;                  //Reference to byte being accessed.
+        uint8_t const index;            //Index of bit inside 'data' to access.
+        static const uint8_t shift[8]; //The lookup table if used.
     };
 
+    struct NumType{
+        constexpr explicit NumType( size_t num ) : value(num) {}
+        constexpr operator size_t() { return value; }
+        size_t value;
+    };
 
-template< size_t _Count, bool _Reverse = false, bool LUT = false >
+    /*
+        count: number of bits required in array.
+        reverse: See REVERSE_OPTIONS, default is no reverse.
+        lookUp: If true, a lookup table is utilized.
+    */
+    template< size_t count, uint8_t reverse = REVERSE_DEFAULT, bool lookUp = false>
     struct BitBool{
-        enum{ bitCount = _Count, byteCount = ( bitCount / 0x8 ) + ( ( bitCount % 0x8 ) ? 0x1 : 0x0 ) };
 
-        BitRef<_Reverse> operator []( const uint16_t index ) {
-            if(LUT) return BitRef<_Reverse>( data[ index >> 0x3 ], index & 0x7, true );
-            else    return BitRef<_Reverse>( data[ index >> 0x3 ], index & 0x7 );
+        //Data accessors.
+        enum{ bitCount = count, byteCount = ( bitCount / 0x8 ) + ( ( bitCount % 0x8 ) ? 0x1 : 0x0 ) };
+
+        //Ranged loop iteration structure.
+        struct bIterator{
+            bIterator( BitBool &o, uint16_t i ) : owner(o), idx(i) {}
+            BitBool &owner;
+            uint16_t idx;
+
+            bool operator !=( const bIterator &b ){ return b.idx != idx; }
+            bIterator &operator ++(){ return ++idx, *this; }
+            BitRef<reverse> operator *(){ return owner[idx]; }
+        };
+
+        //Proxy for arbitrary ranges
+        struct anyIterator{
+            anyIterator( BitBool &o, uint16_t s, uint16_t f ) : owner(o), start(s), finish(f) {}
+            bIterator begin(){ return bIterator( owner, start ); }
+            bIterator end(){ return bIterator( owner, finish ); }
+            BitBool &owner;
+            uint16_t start;
+            uint16_t finish;
+        };
+
+        //Basic iterator functionality.
+        bIterator begin(){ return bIterator( *this, 0 ); }
+        bIterator end(){ return bIterator( *this, count ); }
+
+        //Arbitrary range iterator functionality.
+        anyIterator iterate(){ return anyIterator(*this, 0, count); }  //Duplicate of basic iteration.
+        anyIterator iterate( uint16_t start ){ return anyIterator(*this, start, count); }
+        anyIterator iterate( uint16_t start, uint16_t length ){ return anyIterator(*this, start, start + length); }
+
+        //Read / write access using subscript.
+        BitRef<reverse> operator []( const uint16_t index ){
+            const uint16_t offset = ( reverse & REVERSE_BYTES_MASK ) ? (byteCount - 1) - (index >> 0x3): (index >> 0x3);
+            if(lookUp) return BitRef<reverse>( data[ offset ], index & 0x7, true );
+            else    return BitRef<reverse>( data[ offset ], index & 0x7 );
         }
+
+        //Read / write access using get and set method.
+        bool get( uint16_t index ){ return (*this)[index]; }
+        void set( uint16_t index, bool value ){ return (*this)[index] = value; }
+
+        //Public data object (Free for users to manipulate).
         uint8_t data[ byteCount ];
-};
+    };
+
+    #define TBITS (sizeof(T)*8)
+
+    //Reference any object as a BitBool
+    template<uint8_t reverse, bool lookUp, typename T>
+    inline BitBool<TBITS, reverse, lookUp> &toBitBool( T &t ){
+        union{
+            T *_t;
+            BitBool<TBITS, reverse, lookUp> *_u;
+        } _t = {&t};
+        return *_t._u;
+    }
+
+    template<uint8_t reverse, typename T>
+    inline BitBool<TBITS, reverse, false> &toBitBool( T &t ){
+        return toBitBool<reverse, false, T>(t);
+    }
+
+    template<typename T>
+    inline BitBool<TBITS, false, false> &toBitBool( T &t ){
+        return toBitBool<REVERSE_DEFAULT, false, T>(t);
+    }
+
+
+    //Reference a single bit inside an object.
+    template<uint8_t reverse, bool lookUp, typename T>
+    inline BitRef<reverse> toBitRef( T &t, uint16_t bit ){
+        return toBitBool<reverse, lookUp>(t)[ bit ];
+    }
+
+    template<uint8_t reverse, typename T>
+    inline BitRef<reverse> toBitRef( T &t, uint16_t bit ){
+        return toBitRef<reverse, false>(t, bit);
+    }
+
+    template<typename T>
+    inline BitRef<REVERSE_DEFAULT> toBitRef( T &t, uint16_t bit ){
+        return toBitRef<REVERSE_DEFAULT, false>(t, bit);
+    }
+
+    #undef TBITS
+    #undef REVERSE_BITS_MASK
+    #undef REVERSE_BYTES_MASK
 #endif
