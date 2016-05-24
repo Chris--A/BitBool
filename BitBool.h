@@ -130,7 +130,7 @@
 
         //Read / write access using get and set method.
         bool get( uint16_t index ){ return (*this)[index]; }
-        void set( uint16_t index, bool value ){ return (*this)[index] = value; }
+        void set( uint16_t index, bool value ){ (*this)[index] = value; }
 
         //Public data object (Free for users to manipulate).
         uint8_t data[ byteCount ];
