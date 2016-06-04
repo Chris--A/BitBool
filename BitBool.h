@@ -130,6 +130,10 @@
         //Read / write access using get and set method.
         bool get( uint16_t index ){ return (*this)[index]; }
         void set( uint16_t index, bool value ){ (*this)[index] = value; }
+        void invert( uint16_t index){ return (*this)[index].invert(); }
+
+        //Invert the entire BitBool.
+        void invertAll(){ for( uint16_t idx = 0 ; idx < byteCount ; ++idx ){ data[ idx ] = ~data[ idx ]; } }
 
         //Public data object (Free for users to manipulate).
         uint8_t data[ byteCount ];
