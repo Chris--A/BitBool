@@ -74,11 +74,6 @@
         static const uint8_t shift[8]; //The lookup table if used.
     };
 
-    struct NumType{
-        constexpr explicit NumType( size_t num ) : value(num) {}
-        constexpr operator size_t() { return value; }
-        size_t value;
-    };
 
     /*
         count: number of bits required in array.
