@@ -161,7 +161,6 @@
         return toBitBool<REVERSE_DEFAULT, false, T>(t);
     }
 
-
     //Reference a single bit inside an object.
     template<uint8_t reverse, bool lookUp, typename T>
     inline BitRef<reverse> toBitRef( T &t, uint16_t bit ){
