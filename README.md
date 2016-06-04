@@ -3,9 +3,9 @@
 ![C++98](https://img.shields.io/badge/C%2B%2B-98-yellow.svg) ![C++11](https://img.shields.io/badge/C%2B%2B-11-orange.svg)  
 
 **Written by:** *Christopher Andrews.*  
-**Licence:** *MIT*
+**Licence:** *MIT*<sup>[*](https://github.com/Chris--A/BitBool#licence-information)</sup>
 
-This class provides an efficient and easy to use method of dealing with bits. The library is infact a drop-in replacement for a `bool` array. However it has many more uses and is perfect for use on embedded systems where performance and efficiency matters.
+This class provides an efficient and easy to use method of dealing with bits. The library is infact a drop-in replacement for a `bool` array. However, it has many more uses and is perfect for use on embedded systems or critical systems where performance and efficiency matters.
 
 ### Contents
 - [Installation](https://github.com/Chris--A/BitBool#installation)
@@ -16,9 +16,12 @@ This class provides an efficient and easy to use method of dealing with bits. Th
   - [Turn something else into a **`BitBool`**](https://github.com/Chris--A/BitBool#turn-something-else-into-a-bitbool---)
   - [Reference a single bit of another object or **`BitBool`**](https://github.com/Chris--A/BitBool#reference-a-single-bit-of-another-object-or-bitbool---)
 - [Advanced features](https://github.com/Chris--A/BitBool#advanced-features)
-   - [Iterating a **`BitBool`**](https://github.com/Chris--A/BitBool#iterating-a-bitbool)
+  - [Iterating a **`BitBool`**](https://github.com/Chris--A/BitBool#iterating-a-bitbool)
   - [Selectively iterating a range of bits](https://github.com/Chris--A/BitBool#selectively-iterating-a-range-of-bits)
   - [Customizing how a **`BitBool`** treats the data](https://github.com/Chris--A/BitBool#customizing-how-a-bitbool-treats-the-data)
+    - Controlling the direction of bits and bytes
+    - Optimization using a look-up table
+- [Licence information](https://github.com/Chris--A/BitBool#licence-information)
 
 ### Installation
 
@@ -103,15 +106,76 @@ auto bit = bits[0];
 
 ### Advanced features
 
-#### Iterating a **`BitBool`**
+#### Iterating a **`BitBool`** ![C++11 Only!](https://img.shields.io/badge/Requires-C++11-orange.svg)
+If you have a `BitBool` object it is quite easy to traverse its contents using a `for` loop. However `BitBool` also supports C++11 ranged-loops. See the example below for C++11 style loops.
 
-#### Selectively iterating a range of bits
+```C++
+BitBool<8> bits;
+
+//To read each bit:
+for( auto bit : bits ){
+    //Act on the contents of 'bit'.
+}
+
+//For read/write access, you'll need to use a reference.
+for( auto &bit : bits ){
+    //Act on the contents of 'bit'.
+}
+```
+
+#### Selectively iterating a range of bits ![C++11 Only!](https://img.shields.io/badge/Requires-C++11-orange.svg)
+Similar to simple iteration of a `BitBool` this feature allows traversing a discrete range of bits using a ranged for loop in C++11. The `BitBool` object provides a function named `iterate()` which has a few different overloads.
+
+- `iterate()`  
+This version is equivalent to the methoed described in the previous section. It is provided simply for completeness.
+- `iterate( start )`  
+This method takes a starting index. It will allow you to traverse the `BitBool` from a specific offset finishing at the last bit.
+- `iterate( start, count )`  
+This version allows selectively choosing a discrete range within a `BitBool`. The first parameter is the index to start traversing from, and the second is how many bits to traverse in total.
+
+```C++
+BitBool<8> bits;
+
+//Traverse the last four bits.
+for( auto bit : bits.iterate( 3 ) ){
+    //Will iterate bits 4, 5, 6, 7
+}
+
+Traverse the four middle bits.
+for( auto bit : bits.iterate( 2, 4 ) ){
+    //Will iterate bits 2, 3, 4, 5
+}
+```
 
 #### Customizing how a **`BitBool`** treats the data
 
 
 ----
+
+### Licence information
+
 This product is provided under MIT licence and the only requirement I impose
 is to link to the original source here on GitHub and ensure my name is clearly noted as the Author.
 
 https://github.com/Chris--A/BitBool/
+
+### MIT Licence:
+
+> The MIT License (MIT)
+Copyright (c) 2012-2016 Christopher Andrews  
+https://github.com/Chris--A/BitBool/  
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:  
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.  
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
