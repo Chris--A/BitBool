@@ -1,5 +1,5 @@
 # `BitBool` library for C++ ![Version 1.2.0](https://img.shields.io/badge/Version-1.2.0-blue.svg)
-#### *The ultimate bit manipulation tool*
+#### *The ultimate C++ bit manipulation tool*
 ![C++98](https://img.shields.io/badge/C%2B%2B-98-yellow.svg) ![C++11](https://img.shields.io/badge/C%2B%2B-11-orange.svg)  
 
 **Written by:** *Christopher Andrews.*  
@@ -8,31 +8,31 @@
 This class provides an efficient and easy to use method of dealing with bits. The library is infact a drop-in replacement for a `bool` array. However it has many more uses and is perfect for use on embedded systems where performance and efficiency matters.
 
 ### Contents
-- Installation.
-  - Arduino Users.
-  - General C++ usage.
-- Basic Usage
-  - Creating a **`BitBool`**.
-  - Turn something else into a **`BitBool`**.
-  - Reference a single bit inside another object, or **`BitBool`**.
-- Advanced features.
-   - Iterating a **`BitBool`**.
-  - Selectively iterating a range of bits.
-  - Customizing how a **`BitBool`** treats the data.
+- [Installation](https://github.com/Chris--A/BitBool#installation)
+  - [Arduino Users](https://github.com/Chris--A/BitBool#arduino-users)
+  - [General C++ usage](https://github.com/Chris--A/BitBool#everyone-else-general-c-usage)
+- [Basic Usage](https://github.com/Chris--A/BitBool#basic-usage)
+  - [Creating a **`BitBool`**](https://github.com/Chris--A/BitBool#creating-a-bitbool)
+  - [Turn something else into a **`BitBool`**](https://github.com/Chris--A/BitBool#turn-something-else-into-a-bitbool---)
+  - [Reference a single bit inside another object, or **`BitBool`**](https://github.com/Chris--A/BitBool#3-reference-a-single-bit-of-another-object---)
+- [Advanced features](https://github.com/Chris--A/BitBool#advanced-features)
+   - [Iterating a **`BitBool`**](https://github.com/Chris--A/BitBool#iterating-a-bitbool)
+  - [Selectively iterating a range of bits](https://github.com/Chris--A/BitBool#selectively-iterating-a-range-of-bits)
+  - [Customizing how a **`BitBool`** treats the data](https://github.com/Chris--A/BitBool#customizing-how-a-bitbool-treats-the-data)
 
 ### Installation
 
 #### **Arduino** users
 You can download this library from within the IDE using the built in *library manager*. If you need to install this on an older IDE (pre 1.6.2) and need help installing, leave a message on the Arduino forum [here](http://forum.arduino.cc/index.php?topic=128407.0) for instructions. However if you know how to install a library all you need is `BitBool.h` & `BitBool.cpp` inside a folder named `BitBool`.
 
-#### Everyone else (General C++ usage).
+#### Everyone else (General C++ usage)
 Just add `BitBool.h` and `BitBool.cpp` to your project.
 
 ----
 
 ### Basic usage
 
-##### 1. Creating a `BitBool`.
+##### Creating a `BitBool`
 
 To create a `BitBool` object, you simply need to provide how many bits you need. This is done using the template syntax (A number between angle brackets`<` & `>`). You can use a count of bits as large as you like.
 
@@ -51,7 +51,7 @@ if( bits[1] ){
 }
 ```
 
-##### 2. Turn something else into a `BitBool` ![C++11 Only!](https://img.shields.io/badge/Requires-C++11-orange.svg) / ![At least IDE 1.6.6](https://img.shields.io/badge/Minimum_Arduino_IDE-1.6.6-blue.svg)
+##### Turn something else into a `BitBool` ![C++11 Only!](https://img.shields.io/badge/Requires-C++11-orange.svg) / ![At least IDE 1.6.6](https://img.shields.io/badge/Minimum_Arduino_IDE-1.6.6-blue.svg)
 
 If you have a pre-existing variable, and you need to access its bits individually, there is now a function available to make this an easy task. Using the methods described below you can either create a copy of existing data, or reference it.
 
@@ -71,7 +71,8 @@ If you have a pre-existing variable, and you need to access its bits individuall
   auto &ref = toBitBool( largeNumber );
   ```
 
-##### 3. Reference a single bit of another object. ![C++11 Only!](https://img.shields.io/badge/Requires-C++11-orange.svg) / ![At least IDE 1.6.6](https://img.shields.io/badge/Minimum_Arduino_IDE-1.6.6-blue.svg)
+##### Reference a single bit of another object. ![C++11 Only!](https://img.shields.io/badge/Requires-C++11-orange.svg) / ![At least IDE 1.6.6](https://img.shields.io/badge/Minimum_Arduino_IDE-1.6.6-blue.svg)
+
 If you have an object which contains a particualr bit you would like to modify easily, and it isn't a `BitBool`, you can use the method described below to access it easily. This is quite useful for repetitive tasks on the particular bit. If you already have a `BitBool` scroll down to the second example to see how you can achieve this.
 - `toBitRef( object, bitIndex )`
 
@@ -100,13 +101,13 @@ auto bit = bits[0];
 //Use bit or bits[0] to access the first bit.
 ```
 
-### Advanced usage.
+### Advanced features
 
-#### Iterating a **`BitBool`**.
+#### Iterating a **`BitBool`**
 
-#### Selectively iterating a range of bits.
+#### Selectively iterating a range of bits
 
-#### Customizing how a **`BitBool`** treats the data.
+#### Customizing how a **`BitBool`** treats the data
 
 
 ----
