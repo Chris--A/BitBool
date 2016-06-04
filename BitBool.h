@@ -29,6 +29,7 @@
     #include <stdint.h> //uintX_t types
     #include <stddef.h> //size_t
 
+    //Algorithm reversal options.
     enum REVERSE_OPTIONS{
         REVERSE_NONE,    //This will read data as big endian.
         REVERSE_BITS,    //Bit index zero references MSB, instead of LSB.
@@ -40,6 +41,10 @@
     #define REVERSE_BITS_MASK 0x01
     #define REVERSE_BYTES_MASK 0x02
 
+    /*
+        BitRef Class.
+        This is a proxy class which allows modifying and referencing single bits.
+    */
     template< uint8_t reverse = REVERSE_DEFAULT >
     struct BitRef{
 
@@ -58,6 +63,7 @@
         //Implicit conversion to bit value.
         operator bool() const { return data & index; }
 
+        //Assignment of another BitRef, or a boolean
         bool operator =( const BitRef &copy ) const { return *this = ( const bool ) copy; }
 
         bool operator =( const bool &copy ) const {
@@ -74,8 +80,8 @@
         static const uint8_t shift[8]; //The lookup table if used.
     };
 
-
     /*
+        BitBool Class.
         count: number of bits required in array.
         reverse: See REVERSE_OPTIONS, default is no reverse.
         lookUp: If true, a lookup table is utilized.
@@ -89,12 +95,11 @@
         //Ranged loop iteration structure.
         struct bIterator{
             bIterator( BitBool &o, uint16_t i ) : owner(o), idx(i) {}
-            BitBool &owner;
-            uint16_t idx;
-
             bool operator !=( const bIterator &b ){ return b.idx != idx; }
             bIterator &operator ++(){ return ++idx, *this; }
             BitRef<reverse> operator *(){ return owner[idx]; }
+            BitBool &owner;
+            uint16_t idx;
         };
 
         //Proxy for arbitrary ranges
@@ -103,8 +108,7 @@
             bIterator begin(){ return bIterator( owner, start ); }
             bIterator end(){ return bIterator( owner, finish ); }
             BitBool &owner;
-            uint16_t start;
-            uint16_t finish;
+            uint16_t start, finish;
         };
 
         //Basic iterator functionality.
