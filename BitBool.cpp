@@ -1,7 +1,7 @@
 /* 
     The MIT License (MIT)
 
-    Copyright (c) 2012-2015 Christopher Andrews
+    Copyright (c) 2012-2016 Christopher Andrews
     http://arduino.land/Code/BitBool/
     
     Permission is hereby granted, free of charge, to any person obtaining a copy
