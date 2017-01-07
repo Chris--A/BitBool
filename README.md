@@ -16,8 +16,8 @@ This class provides an efficient and easy to use method of dealing with bits. Th
   - [Turn something else into a **`BitBool`**](https://github.com/Chris--A/BitBool#turn-something-else-into-a-bitbool---)
   - [Reference a single bit of another object or **`BitBool`**](https://github.com/Chris--A/BitBool#reference-a-single-bit-of-another-object-or-bitbool---)
 - [Advanced features](https://github.com/Chris--A/BitBool#advanced-features)
-  - [Iterating a **`BitBool`**](https://github.com/Chris--A/BitBool#iterating-a-bitbool)
-  - [Selectively iterating a range of bits](https://github.com/Chris--A/BitBool#selectively-iterating-a-range-of-bits)
+  - [Iterating a **`BitBool`**](https://github.com/Chris--A/BitBool#iterating-a-bitbool-)
+  - [Selectively iterating a range of bits](https://github.com/Chris--A/BitBool#selectively-iterating-a-range-of-bits-)
   - [Customizing how a **`BitBool`** treats the data](https://github.com/Chris--A/BitBool#customizing-how-a-bitbool-treats-the-data)
     - Controlling the direction of bits and bytes
     - Optimization using a look-up table
@@ -137,11 +137,11 @@ This version allows selectively choosing a discrete range within a `BitBool`. Th
 BitBool<8> bits;
 
 //Traverse the last four bits.
-for( auto bit : bits.iterate( 3 ) ){
+for( auto bit : bits.iterate( 4 ) ){
     //Will iterate bits 4, 5, 6, 7
 }
 
-Traverse the four middle bits.
+//Traverse the four middle bits.
 for( auto bit : bits.iterate( 2, 4 ) ){
     //Will iterate bits 2, 3, 4, 5
 }
